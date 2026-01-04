@@ -1,0 +1,37 @@
+# ------------------------
+# Python
+# ------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# ------------------------
+# Virtual Environment
+# ------------------------
+venv/
+.env/
+
+# ------------------------
+# OAuth / Secrets (CRITICAL)
+# ------------------------
+client_secret.json
+secrets/
+token.json
+
+# ------------------------
+# Runtime Generated Files
+# ------------------------
+data/links_store.csv
+data/master_uploads.csv
+logs/
+temp/
+
+# ------------------------
+# OS / Editor junk
+# ------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
