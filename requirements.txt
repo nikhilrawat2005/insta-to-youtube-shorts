@@ -4,4 +4,4 @@ google-api-python-client==2.97.0
 google-auth-oauthlib==1.0.0
 yt-dlp==2023.10.13
 gunicorn==20.1.0
-google-auth==2.26.4
+google-auth
