@@ -9,6 +9,9 @@ CLIENT_SECRET = "client_secret.json"
 TOKEN_FILE = "secrets/token.json"
 
 def get_youtube():
+    if not os.path.exists(CLIENT_SECRET):
+        raise RuntimeError("YouTube credentials missing")
+
     creds = None
     if os.path.exists(TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
@@ -24,7 +27,7 @@ def get_youtube():
 
 def upload_short(video_path, caption):
     youtube = get_youtube()
-    req = youtube.videos().insert(
+    request = youtube.videos().insert(
         part="snippet,status",
         body={
             "snippet": {
@@ -36,5 +39,5 @@ def upload_short(video_path, caption):
         },
         media_body=MediaFileUpload(video_path, mimetype="video/mp4", resumable=True)
     )
-    res = req.execute()
-    return res["id"]
+    response = request.execute()
+    return response["id"]
