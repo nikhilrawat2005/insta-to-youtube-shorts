@@ -1,0 +1,528 @@
+/* style.css */
+
+/* Paper texture background */
+body {
+  background-color: #f9f7f1;
+  background-image: 
+    radial-gradient(#e0dcd5 8%, transparent 8%),
+    radial-gradient(#e0dcd5 8%, transparent 8%);
+  background-size: 40px 40px;
+  background-position: 0 0, 20px 20px;
+  margin: 0;
+  padding: 20px;
+  font-family: 'Patrick Hand', 'Indie Flower', cursive;
+  color: #2c2416;
+  min-height: 100vh;
+}
+
+/* Notebook container with paper effect */
+.notebook-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  background-color: #fefdf9;
+  padding: 30px 40px 40px 60px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Paper texture overlay */
+.paper-texture {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(to bottom, transparent 95%, rgba(0,0,0,0.03) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.07) 25px);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.7;
+}
+
+/* Margin line like a notebook */
+.margin-line {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ff6b6b;
+  opacity: 0.6;
+  z-index: 2;
+}
+
+/* Header with hand-drawn style */
+.hand-drawn-header {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 3;
+}
+
+.hand-drawn-header h1 {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 2.8rem;
+  color: #2c2416;
+  margin: 0 0 5px 0;
+  letter-spacing: 1px;
+  position: relative;
+  display: inline-block;
+}
+
+.header-underline {
+  height: 3px;
+  width: 80%;
+  margin: 0 auto;
+  background-color: #2c2416;
+  opacity: 0.7;
+  border-radius: 10px;
+  position: relative;
+}
+
+.header-underline::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background-color: #2c2416;
+  opacity: 0.3;
+}
+
+.subtitle {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.2rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Stats row with sketch boxes */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 3;
+}
+
+.sketch-box {
+  flex: 1;
+  margin: 0 15px;
+  padding: 20px 15px;
+  background-color: #fefdf9;
+  border-radius: 8px;
+  position: relative;
+  text-align: center;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sketch-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 3px solid #2c2416;
+  border-radius: 12px;
+  opacity: 0.8;
+  pointer-events: none;
+  animation: pulse-border 4s infinite alternate;
+}
+
+@keyframes pulse-border {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.005); opacity: 0.9; }
+}
+
+.handwritten-title {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 1.6rem;
+  margin: 0 0 15px 0;
+  color: #2c2416;
+}
+
+.stat-number {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #ff6b6b;
+  margin: 10px 0;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+}
+
+.hand-drawn-underline {
+  height: 2px;
+  width: 70%;
+  margin: 10px auto;
+  background-color: #2c2416;
+  opacity: 0.5;
+  border-radius: 10px;
+}
+
+.timer-container {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 2.2rem;
+  color: #2c2416;
+  margin: 15px 0;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  display: inline-block;
+  min-width: 200px;
+}
+
+/* Panel for video storage */
+.panel-container {
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 3;
+}
+
+.sketch-panel {
+  background-color: #fefdf9;
+  border-radius: 10px;
+  padding: 25px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.panel-title {
+  margin-bottom: 25px;
+}
+
+.handwritten-panel-title {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 2.2rem;
+  color: #2c2416;
+  margin: 0;
+  display: inline-block;
+  position: relative;
+}
+
+.title-underline {
+  height: 3px;
+  width: 100%;
+  background-color: #2c2416;
+  opacity: 0.7;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+/* Drag and drop area */
+.drag-drop-area {
+  border: 4px dashed #aaa;
+  border-radius: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.7);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.drag-drop-area:hover {
+  border-color: #ff6b6b;
+  background-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-2px);
+}
+
+.drag-drop-area.dragover {
+  border-color: #4ecdc4;
+  background-color: rgba(78, 205, 196, 0.1);
+}
+
+.drop-content {
+  pointer-events: none;
+}
+
+.sketch-icon {
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.handwritten-text {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.5rem;
+  margin: 5px 0;
+  color: #2c2416;
+}
+
+.handwritten-subtext {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.2rem;
+  margin: 5px 0 15px 0;
+  color: #666;
+}
+
+.file-count-indicator {
+  display: inline-block;
+  padding: 5px 15px;
+  background-color: #ffef9f;
+  border-radius: 20px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1rem;
+  color: #2c2416;
+  margin-top: 10px;
+  border: 2px dashed #ffd166;
+}
+
+#file-input {
+  display: none;
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sketchy-btn {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 1.3rem;
+  padding: 12px 25px;
+  background-color: #4ecdc4;
+  color: #2c2416;
+  border: 3px solid #2c2416;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  transform: rotate(-0.5deg);
+}
+
+.sketchy-btn:hover {
+  transform: rotate(0.5deg) translateY(-3px);
+  background-color: #ffd166;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+
+/* Big upload button */
+.upload-button-container {
+  text-align: center;
+  margin: 40px 0;
+  position: relative;
+  z-index: 3;
+}
+
+.big-sketchy-btn {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 2rem;
+  padding: 25px 60px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  transform: rotate(-1deg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 400px;
+}
+
+.big-sketchy-btn:hover {
+  transform: rotate(0.5deg) translateY(-5px);
+  background-color: #ff5252;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+}
+
+.big-sketchy-btn:active {
+  transform: rotate(0deg) translateY(-2px);
+}
+
+.btn-text {
+  margin-right: 15px;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+}
+
+.btn-arrow {
+  font-size: 2.5rem;
+  animation: bounce-arrow 1.5s infinite alternate;
+}
+
+@keyframes bounce-arrow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(5px); }
+}
+
+.btn-sketch-border {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 3px solid #2c2416;
+  border-radius: 15px;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.button-shadow {
+  height: 10px;
+  width: 80%;
+  margin: 0 auto;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, transparent 70%);
+  opacity: 0.5;
+}
+
+/* Table styling */
+.table-container {
+  margin-top: 50px;
+  position: relative;
+  z-index: 3;
+}
+
+.handwritten-table-title {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 2.2rem;
+  color: #2c2416;
+  margin: 0 0 10px 0;
+}
+
+.table-title-underline {
+  height: 3px;
+  width: 150px;
+  background-color: #2c2416;
+  opacity: 0.7;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.hand-drawn-table {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-style: hidden;
+}
+
+table th, table td {
+  border: 2px solid #2c2416;
+  padding: 15px 10px;
+  text-align: left;
+  opacity: 0.9;
+}
+
+.handwritten-header {
+  font-family: 'Gochi Hand', cursive;
+  font-size: 1.4rem;
+  background-color: #ffef9f;
+  color: #2c2416;
+  position: relative;
+}
+
+.handwritten-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 5%;
+  width: 90%;
+  height: 1px;
+  background-color: #2c2416;
+  opacity: 0.5;
+}
+
+.sketch-cell {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.2rem;
+  color: #2c2416;
+}
+
+.row-odd {
+  background-color: #fefdf9;
+}
+
+.row-even {
+  background-color: #f5f1e8;
+}
+
+.row-odd:hover, .row-even:hover {
+  background-color: #e8f4f3;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1rem;
+}
+
+.store-status {
+  background-color: #c7f9cc;
+  border: 2px dashed #80ed99;
+}
+
+.upload-status {
+  background-color: #a0d2ff;
+  border: 2px dashed #5a8fd9;
+}
+
+.caption-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-log {
+  text-align: center;
+  padding: 30px !important;
+  font-size: 1.5rem !important;
+  color: #666;
+}
+
+/* Footer */
+.footer-note {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 2px dashed #ccc;
+  position: relative;
+  z-index: 3;
+}
+
+.handwritten-footer {
+  font-family: 'Indie Flower', cursive;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .stats-row {
+    flex-direction: column;
+  }
+  
+  .sketch-box {
+    margin: 10px 0;
+  }
+  
+  .big-sketchy-btn {
+    min-width: 300px;
+    font-size: 1.7rem;
+    padding: 20px 40px;
+  }
+  
+  .panel-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}

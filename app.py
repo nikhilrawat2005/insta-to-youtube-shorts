@@ -1,92 +1,153 @@
-from flask import Flask, request, jsonify, render_template, send_file
-import csv, os, subprocess
+import os, json, random, csv, time
 from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for
 
-app = Flask(__name__, template_folder="templates")
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2.credentials import Credentials
 
-DATA_DIR = "data"
-LINKS_CSV = os.path.join(DATA_DIR, "links_store.csv")
-MASTER_CSV = os.path.join(DATA_DIR, "master_uploads.csv")
-LOG_FILE = os.path.join("logs", "engine.log")
+app = Flask(__name__)
 
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs("logs", exist_ok=True)
-os.makedirs("temp/downloads", exist_ok=True)
+STORE_FOLDER = "store"
+CSV_FILE = "upload_log.csv"
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
 
-def ensure_csv(path, headers):
-    if not os.path.exists(path):
-        with open(path, "w", newline="", encoding="utf-8") as f:
-            csv.writer(f).writerow(headers)
+os.makedirs(STORE_FOLDER, exist_ok=True)
 
-ensure_csv(LINKS_CSV, ["reel_url", "status", "added_at"])
-ensure_csv(MASTER_CSV, ["reel_url", "caption", "youtube_id", "uploaded_at"])
+# ---------- CSV INIT ----------
+if not os.path.exists(CSV_FILE):
+    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["video_name", "store", "upload", "caption", "date", "time"])
 
-def read_csv(path):
-    if not os.path.exists(path):
-        return []
-    with open(path, newline="", encoding="utf-8") as f:
+# ---------- CSV HELPERS ----------
+def read_csv():
+    with open(CSV_FILE, "r", encoding="utf-8") as f:
         return list(csv.DictReader(f))
 
-@app.route("/")
-def index():
-    return render_template("index.html")
+def write_csv(rows):
+    with open(CSV_FILE, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["video_name", "store", "upload", "caption", "date", "time"]
+        )
+        writer.writeheader()
+        writer.writerows(rows)
 
-@app.route("/add-links", methods=["POST"])
-def add_links():
-    links = request.json.get("links", [])
-    existing = {r["reel_url"] for r in read_csv(LINKS_CSV)} | \
-               {r["reel_url"] for r in read_csv(MASTER_CSV)}
+# ---------- UTILS ----------
+def get_next_video_number():
+    rows = read_csv()
+    last = 0
+    for r in rows:
+        try:
+            n = int(r["video_name"].replace("video_", "").replace(".mp4", ""))
+            last = max(last, n)
+        except:
+            pass
+    return last + 1
 
-    added = 0
-    with open(LINKS_CSV, "a", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        for link in links:
-            if link and link not in existing:
-                writer.writerow([link, "pending", datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
-                added += 1
+def get_random_caption():
+    with open("captions.json", "r", encoding="utf-8") as f:
+        captions = json.load(f).get("captions", [])
+    return random.choice(captions) if captions else "ai #shorts #viral"
 
-    return jsonify({"added": added})
+def get_youtube():
+    if not os.path.exists("token.json"):
+        raise RuntimeError("token.json not found")
 
-@app.route("/start", methods=["POST"])
-def start_engine():
-    subprocess.Popen(["python", "engine.py"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return jsonify({"status": "started"})
-
-@app.route("/stats")
-def stats():
-    links = read_csv(LINKS_CSV)
-    uploads = read_csv(MASTER_CSV)
-
-    pending = sum(1 for r in links if r.get("status") == "pending")
-
-    today = datetime.now().strftime("%Y-%m-%d")
-    today_uploads = sum(
-        1 for r in uploads
-        if r.get("uploaded_at", "").startswith(today)
+    creds = Credentials.from_authorized_user_file(
+        "token.json",
+        SCOPES
     )
+    return build("youtube", "v3", credentials=creds)
+
+# ---------- ROUTES ----------
+@app.route("/")
+def dashboard():
+    rows = read_csv()
+
+    store_count = sum(1 for r in rows if r["store"] == "downloaded")
+    upload_count = sum(1 for r in rows if r["upload"] == "yes")
 
     last_upload = None
-    for r in reversed(uploads):
-        if r.get("uploaded_at"):
-            last_upload = r["uploaded_at"]
+    for r in rows:
+        if r["upload"] == "yes":
+            last_upload = f"{r['date']} {r['time']}"
+
+    return render_template(
+        "dashboard.html",
+        logs=rows[::-1],
+        store_count=store_count,
+        upload_count=upload_count,
+        last_upload=last_upload
+    )
+
+@app.route("/store", methods=["POST"])
+def store_video():
+    rows = read_csv()
+    files = request.files.getlist("video")
+
+    base = get_next_video_number()
+
+    for i, file in enumerate(files):
+        name = f"video_{base + i}.mp4"
+        file.save(os.path.join(STORE_FOLDER, name))
+
+        rows.append({
+            "video_name": name,
+            "store": "downloaded",
+            "upload": "no",
+            "caption": "",
+            "date": "",
+            "time": ""
+        })
+
+    write_csv(rows)
+    return redirect(url_for("dashboard"))
+
+@app.route("/upload", methods=["POST"])
+def upload_video():
+    files = os.listdir(STORE_FOLDER)
+    if not files:
+        return redirect(url_for("dashboard"))
+
+    video = files[0]
+    path = os.path.join(STORE_FOLDER, video)
+    caption = get_random_caption()
+
+    yt = get_youtube()
+    yt.videos().insert(
+        part="snippet,status",
+        body={
+            "snippet": {
+                "title": caption,  # ✅ JSON CAPTION ONLY
+                "description": caption,   # ✅ JSON CAPTION ONLY
+                "tags": caption.split(),
+                "categoryId": "22"
+            },
+            "status": {"privacyStatus": "public"}
+        },
+        media_body=MediaFileUpload(path, resumable=True)
+    ).execute()
+
+    time.sleep(1)
+    os.remove(path)
+
+    rows = read_csv()
+    now = datetime.now()
+
+    for r in rows:
+        if r["video_name"] == video:
+            r["store"] = "delete"
+            r["upload"] = "yes"
+            r["caption"] = caption
+            r["date"] = now.strftime("%Y-%m-%d")
+            r["time"] = now.strftime("%H:%M:%S")
             break
 
-    return jsonify({
-        "pending_links": pending,
-        "today_uploads": today_uploads,
-        "last_upload_time": last_upload
-    })
-
-@app.route("/logs")
-def logs():
-    if not os.path.exists(LOG_FILE):
-        return ""
-    with open(LOG_FILE, "r", encoding="utf-8") as f:
-        return f.read()
-
-@app.route("/csv")
-def csv_download():
-    return send_file(MASTER_CSV, as_attachment=True)
+    write_csv(rows)
+    return redirect(url_for("dashboard"))
 
 if __name__ == "__main__":
     app.run(debug=True)

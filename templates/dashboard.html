@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Video Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="notebook-container">
+    <!-- Notebook paper texture and margin -->
+    <div class="paper-texture"></div>
+    <div class="margin-line"></div>
+    
+    <header class="hand-drawn-header">
+      <h1>📊 AI VIDEO AUTOMATION SYSTEM</h1>
+      <div class="header-underline"></div>
+      <p class="subtitle">Creative Hacker's Lab Notebook</p>
+    </header>
+
+    <!-- Top Row: Three hand-sketched boxes -->
+    <div class="stats-row">
+      <div class="sketch-box">
+        <div class="sketch-border"></div>
+        <h3 class="handwritten-title">Stored Videos</h3>
+        <div class="stat-number">{{ store_count if store_count else 0 }}</div>
+        <div class="hand-drawn-underline"></div>
+      </div>
+      
+      <div class="sketch-box">
+        <div class="sketch-border"></div>
+        <h3 class="handwritten-title">Uploaded Videos</h3>
+        <div class="stat-number">{{ upload_count if upload_count else 0 }}</div>
+        <div class="hand-drawn-underline"></div>
+      </div>
+      
+      <div class="sketch-box">
+        <div class="sketch-border"></div>
+        <h3 class="handwritten-title">Time Since Last Upload</h3>
+        {% if last_upload %}
+        <div class="timer-container" id="timer" data-time="{{ last_upload }}">
+          <span class="timer-digits">--:--:--</span>
+        </div>
+        {% else %}
+        <div class="timer-container">
+          <span class="timer-digits">No uploads yet</span>
+        </div>
+        {% endif %}
+        <div class="hand-drawn-underline"></div>
+      </div>
+    </div>
+
+    <!-- Video Storage Panel -->
+    <div class="panel-container">
+      <div class="sketch-panel">
+        <div class="panel-title">
+          <h2 class="handwritten-panel-title">Stored Videos Panel</h2>
+          <div class="title-underline"></div>
+        </div>
+        
+        <div class="drag-drop-area" id="drop-area">
+          <div class="drop-content">
+            <div class="sketch-icon">📁</div>
+            <p class="handwritten-text">Drag & drop video files here</p>
+            <p class="handwritten-subtext">or click to browse</p>
+            <div class="file-count-indicator">Multiple select supported</div>
+          </div>
+          <form action="/store" method="post" enctype="multipart/form-data" id="store-form">
+            <input type="file" name="video" id="file-input" multiple required accept="video/*">
+          </form>
+        </div>
+        
+        <div class="panel-footer">
+          <button type="button" class="sketchy-btn browse-btn" id="browse-btn">BROWSE FILES</button>
+          <span class="handwritten-text">Supports: MP4, MOV, AVI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Big Upload Button -->
+    <div class="upload-button-container">
+      <form action="/upload" method="post" id="upload-form">
+        <button type="submit" class="big-sketchy-btn">
+          <span class="btn-text">UPLOAD NEXT VIDEO</span>
+          <div class="btn-arrow">➔</div>
+          <div class="btn-sketch-border"></div>
+        </button>
+      </form>
+      <div class="button-shadow"></div>
+    </div>
+
+    <!-- Video Log Table -->
+    <div class="table-container">
+      <div class="table-title">
+        <h2 class="handwritten-table-title">Video Log</h2>
+        <div class="table-title-underline"></div>
+      </div>
+      
+      <div class="hand-drawn-table">
+        <table>
+          <thead>
+            <tr>
+              <th class="handwritten-header">Video Name</th>
+              <th class="handwritten-header">Store Status</th>
+              <th class="handwritten-header">Upload Status</th>
+              <th class="handwritten-header">Caption</th>
+              <th class="handwritten-header">Date</th>
+              <th class="handwritten-header">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in logs %}
+            <tr class="{{ loop.cycle('row-odd', 'row-even') }}">
+              <td class="sketch-cell">{{ r.video_name }}</td>
+              <td class="sketch-cell">
+                <span class="status-indicator store-status">{{ r.store }}</span>
+              </td>
+              <td class="sketch-cell">
+                <span class="status-indicator upload-status">{{ r.upload }}</span>
+              </td>
+              <td class="sketch-cell caption-cell">{{ r.caption }}</td>
+              <td class="sketch-cell">{{ r.date }}</td>
+              <td class="sketch-cell">{{ r.time }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="6" class="empty-log handwritten-text">No video logs yet. Upload your first video!</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div class="footer-note">
+      <p class="handwritten-footer">AI Video Automation System v2.1 • Creative Lab Edition</p>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

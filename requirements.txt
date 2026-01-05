@@ -1,7 +1,5 @@
-Flask==2.3.3
-instaloader==4.11.0
-google-api-python-client==2.97.0
-google-auth-oauthlib==1.0.0
-yt-dlp==2023.10.13
-gunicorn==20.1.0
-google-auth==2.26.4
+Flask==3.0.0
+
+google-api-python-client==2.111.0
+google-auth==2.25.2
+google-auth-oauthlib==1.2.0
